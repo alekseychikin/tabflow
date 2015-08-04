@@ -13,10 +13,11 @@
       border-style: solid;
       border-color: #000;
       border-width: 0 1px 1px 1px;
-      padding: 5px 5px;
+      padding: 5px 15px;
       margin-left: -1px;
       background-color: #fff;
     }
+    /*
     .tabs__item:nth-child(1) {
       background-color: #f1f1f1;
     }
@@ -53,6 +54,68 @@
     .tabs__item:nth-child(12) {
       background-color: #acc2ae;
     }
+    */
+    .vertical-line {
+      position: absolute;
+      right: 100px;
+      width: 1px;
+      height: 50px;
+      background-color: #000;
+      top: 57px;
+      cursor: pointer;
+    }
+    .vertical-line:before {
+      content: '';
+      position: absolute;
+      left: -5px;
+      right: -5px;
+      top: 0;
+      bottom: 0;
+    }
+    .vertical-line2 {
+      position: absolute;
+      left: 100px;
+      width: 1px;
+      height: 50px;
+      background-color: #000;
+      top: 57px;
+      cursor: pointer;
+    }
+    .vertical-line2:before {
+      content: '';
+      position: absolute;
+      left: -5px;
+      right: -5px;
+      top: 0;
+      bottom: 0;
+    }
+    .vertical-current-left {
+      position: absolute;
+      left: 0px;
+      width: 1px;
+      height: 50px;
+      background-color: #9aa4e4;
+      top: 57px;
+      cursor: pointer;
+    }
+    .tabs__item--blue {
+      box-shadow: 0 0 5px blue inset;
+    }
+    .tabs__item--green {
+      box-shadow: 0 0 5px #40C140 inset;
+    }
+    .tabs__item--red {
+      box-shadow: 0 0 5px #c14740 inset;
+    }
+    .tabs__item--yellow {
+      box-shadow: 0 0 5px #e9e85d inset;
+    }
+    .tabs__item--pink {
+      box-shadow: 0 0 5px #e25de9 inset;
+    }
+    .tabs__item--gray {
+      box-shadow: 0 0 5px #c7c7c7 inset;
+    }
   </style>
 </head>
 <body>
@@ -76,6 +139,9 @@
     <div class="tabs__item">Выставлен оффер</div>
     <div class="tabs__item">Выход на работу</div>
   </div>
+  <div class="vertical-line"></div>
+  <div class="vertical-line2"></div>
+  <div class="vertical-current-left"></div>
   <script src="tabs.js"></script>
 </body>
 </html>

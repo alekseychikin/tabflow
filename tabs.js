@@ -4,7 +4,9 @@
   {
     var i, len;
     for (i = 0, len = elements.length; i < len; i = i + 1) {
-      cb(elements[i], i);
+      if (cb(elements[i], i) === false) {
+        break;
+      }
     }
   };
   var _toArray = function (elements)
@@ -109,7 +111,11 @@
     element.style.height = elementHeight + 'px';
     wrap.style.height = elementHeight + 'px';
     wrap.style.position = 'relative';
-    var rightBorder = elementWidth - 100;
+
+    var rightMargin = 100;
+    var leftMargin = 100;
+    var rightBorder = elementWidth - rightMargin;
+    var leftBorder = leftMargin;
 
     element.appendChild(leftElement);
     leftElement.style.position = 'absolute';
@@ -130,14 +136,14 @@
     _forEach(childs, function (item)
     {
       item.dataLeft = _getOffset(item).left;
-      item.dataWidth = _width(item, false);
+      item.dataWidth = _width(item, true);
     });
 
     _forEach(childs, function (item)
     {
       item.style.position = 'absolute';
       item.style.left = item.dataLeft + 'px';
-      item.style.width = item.dataWidth + 'px';
+      item.style.width = _width(item, false) + 'px';
     });
 
     var _log = function (a, b)
@@ -161,25 +167,93 @@
     //          ↑↑↑    возвращает от 0 до 1    ↑↑↑ ← приводим до единицы
     // console.log('coeff', coeff);
 
+    var verticalCurrentLeft = document.getElementsByClassName('vertical-current-left')[0];
+
+//#####################
+
+    var notSoFast;
     var _work = function ()
     {
-      var _left;
-      var prevItem;
-      _forEach(childs, function (item)
-      {
-        if (item.dataLeft > rightBorder + leftIdent && item.dataLeft < rightBorder + leftIdent + diffValue) {
-          // начать смещать
-          // item.style.left = _log(item.dataLeft - rightBorder - leftIdent, 3);
-          // console.log(item.dataLeft - rightBorder - leftIdent);
-          _left = item.dataLeft - (getRightIdent(item.dataLeft - rightBorder - leftIdent)) * 100;
-          console.log (item.dataLeft, _left);
-          item.style.left = _left + 'px';
-        }
-        else {
-          item.style.left = item.dataLeft + 'px';
-        }
-      });
+      if (!notSoFast) {
+        // notSoFast = setTimeout(function ()
+        // {
+          // notSoFast = false;
+          var currentLeft = 0;
+          var _left;
+          var prevItem;
+          var count = 5;
+          var _transition = 50;
+          var minWidth = 70;
+          var transition;
+          // var rightBorder = elementWidth * 1.5 / 2;
+          _forEach(childs, function (item)
+          {
+            if (!prevItem) {
+              prevItem = item;
+              return ;
+            }
+
+            if (prevItem.dataWidth > minWidth && currentLeft + prevItem.dataWidth > rightBorder) {
+              if (currentLeft + prevItem.dataWidth + 10 >= rightBorder &&
+                currentLeft + prevItem.dataWidth - (_transition / 2) < rightBorder
+              ) {
+                item.style.left = currentLeft + prevItem.dataWidth - ((currentLeft + prevItem.dataWidth + _transition - rightBorder) / 3) + 'px'
+                item.className = 'tabs__item tabs__item--red';
+                currentLeft += prevItem.dataWidth - ((currentLeft + prevItem.dataWidth + _transition - rightBorder) / 3);
+              }
+              else {
+                transition = Math.max(currentLeft + _transition, rightBorder);
+                item.style.left = transition + 'px';
+                item.className = 'tabs__item tabs__item--blue';
+                currentLeft = transition;
+              }
+            }
+            // else if (currentLeft + _transition < leftBorder) {
+            //   transition = Math.min(currentLeft + _transition, leftBorder);
+            //   item.style.left = transition + 'px';
+            //   item.className = 'tabs__item tabs__item--gray';
+            //   currentLeft = transition;
+            // }
+            else if (prevItem.dataWidth > minWidth &&
+              currentLeft + prevItem.dataWidth - 1 <= rightBorder &&
+              currentLeft + prevItem.dataWidth + _transition > rightBorder
+            ) {
+              item.style.left = currentLeft + prevItem.dataWidth - ((currentLeft + prevItem.dataWidth + _transition - rightBorder) / 3) + 'px'
+              currentLeft += prevItem.dataWidth - ((currentLeft + prevItem.dataWidth + _transition - rightBorder) / 3);
+              item.className = 'tabs__item tabs__item--yellow';
+            }
+            else if (prevItem.dataWidth <= minWidth &&
+              currentLeft + prevItem.dataWidth + _transition > rightBorder &&
+              currentLeft + prevItem.dataWidth <= rightBorder
+            ) {
+              item.style.left = currentLeft + prevItem.dataWidth - ((currentLeft + prevItem.dataWidth + _transition - rightBorder) / 5) + 'px'
+              currentLeft += prevItem.dataWidth - ((currentLeft + prevItem.dataWidth + _transition - rightBorder) / 5);
+              item.className = 'tabs__item tabs__item--pink';
+            }
+            else if (
+              prevItem.dataWidth <= minWidth &&
+              currentLeft + prevItem.dataWidth + 20 > rightBorder
+            ) {
+              item.style.left = currentLeft + prevItem.dataWidth - 10 + 'px';
+              currentLeft += prevItem.dataWidth - 10;
+              item.className = 'tabs__item tabs__item--blue';
+            }
+            else {
+              item.style.left = currentLeft + prevItem.dataWidth + 'px'
+              currentLeft += prevItem.dataWidth;
+              item.className = 'tabs__item tabs__item--green';
+            }
+            // verticalCurrentLeft.style.left = currentLeft + 'px';
+            prevItem = item;
+            if (!--count) {
+              // return false;
+            }
+          });
+        // }, 100);
+      }
     };
+
+//#####################
 
     rightElement.addEventListener('click', function (e)
     {
@@ -197,8 +271,73 @@
     window.addEventListener('resize', function ()
     {
       elementWidth = _width(element);
-      rightBorder = elementWidth - 100;
+      rightBorder = elementWidth - leftMargin;
       _work();
     });
+
+    function disableSelection(target)
+    {
+      target.setAttribute('unselectable', 'on');
+      target.style.userSelect = 'none';
+      target.style.WebkitUserSelect = 'none';
+      target.addEventListener('selectstart', function (e)
+      {
+        e.preventDefault();
+      });
+    }
+
+    disableSelection(document.body);
+
+    (function ()
+    {
+      var startLeft = 0;
+      var startBorderRight;
+      var isMoving = false;
+      var rightline = document.getElementsByClassName('vertical-line')[0];
+      rightline.addEventListener('mousedown', function (e)
+      {
+        startLeft = e.screenX;
+        startBorderRight = rightBorder;
+        isMoving = true;
+      });
+      document.addEventListener('mousemove', function (e)
+      {
+        if (isMoving) {
+          rightBorder = startBorderRight + e.screenX - startLeft;
+          rightline.style.right = elementWidth - rightBorder + 'px';
+          _work();
+        }
+      });
+      document.addEventListener('mouseup', function ()
+      {
+        isMoving = false;
+      })
+    })();
+
+    (function ()
+    {
+      var startLeft = 0;
+      var startBorderLeft;
+      var isMoving = false;
+      var rightline = document.getElementsByClassName('vertical-line2')[0];
+      rightline.addEventListener('mousedown', function (e)
+      {
+        startLeft = e.screenX;
+        startBorderLeft = leftBorder;
+        isMoving = true;
+      });
+      document.addEventListener('mousemove', function (e)
+      {
+        if (isMoving) {
+          leftBorder = startBorderLeft + e.screenX - startLeft;
+          rightline.style.left = leftBorder + 'px';
+          _work();
+        }
+      });
+      document.addEventListener('mouseup', function ()
+      {
+        isMoving = false;
+      })
+    })();
   });
 })();
