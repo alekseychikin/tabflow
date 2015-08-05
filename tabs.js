@@ -146,6 +146,8 @@
     {
       item.dataLeft = _getOffset(item).left;
       item.dataWidth = _width(item, true);
+      item.dataLastLeft = 0;
+      item.showLine = false;
     });
 
     _forEach(childs, function (item)
@@ -200,6 +202,7 @@
           var beginIndex = 1;
           var firstEntire = false;
 
+          var childsLength = childs.length;
           _forInvEach(childs, function (item, index)
           {
             if (index == childs.length - 1) {
@@ -207,10 +210,17 @@
               currentRight = item.dataLeft;
               return ;
             }
-            if (item.dataLeft < leftBorder) {
-              transition = Math.min(currentRight - _transition, leftBorder);
+
+            if (item.showLine) {
+              verticalCurrentLeft.style.left = currentRight + 'px';
+            }
+            if (item.dataWidth > _transition &&
+              currentRight - item.dataWidth + 25 > leftBorder &&
+              currentRight - item.dataWidth - _transition + 3 < leftBorder
+            ) {
+              transition = currentRight - item.dataWidth - ((currentRight - item.dataWidth - leftBorder - _transition) / 3);
               item.style.left = transition + 'px';
-              item.className = 'tabs__item tabs__item--blue';
+              item.className = 'tabs__item tabs__item--yellow';
               currentRight = transition;
               if (!firstEntire) {
                 firstEntire = true;
@@ -218,21 +228,72 @@
                 currentLeft -= item.dataWidth;
               }
             }
-            else {
-              beginIndex = index;
-              currentRight -= item.dataWidth;
-              currentLeft = currentRight;
+            else if (item.dataWidth < _transition &&
+              currentRight - item.dataWidth + 6 > leftBorder &&
+              currentRight - item.dataWidth - _transition < leftBorder
+            ) {
+              transition = currentRight - item.dataWidth - ((currentRight - item.dataWidth - leftBorder - _transition) / 8);
+              item.style.left = transition + 'px';
+              item.className = 'tabs__item tabs__item--pink';
+              currentRight = transition;
+              if (!firstEntire) {
+                firstEntire = true;
+                beginIndex = index;
+                currentLeft -= item.dataWidth;
+              }
+            }
+            else if (item.dataWidth < _transition &&
+              currentRight - item.dataWidth < leftBorder &&
+              currentRight > leftBorder
+            ) {
+              currentRight -= item.dataWidth + ((currentRight - item.dataWidth - leftBorder - _transition) / 8);
+              if (!firstEntire) {
+                beginIndex = index;
+                currentLeft = currentRight;
+              }
               item.style.left = currentRight + 'px';
-              item.className = 'tabs__item';
+              item.className = 'tabs__item tabs__item--red';
+            }
+            else if (item.dataWidth > _transition && currentRight - item.dataWidth < leftBorder) {
+              currentRight = Math.min(currentRight - _transition, leftBorder);
+              item.style.left = currentRight + 'px';
+              item.className = 'tabs__item tabs__item--blue';
+              if (!firstEntire) {
+                firstEntire = true;
+                beginIndex = index;
+                currentLeft -= item.dataWidth;
+              }
+            }
+            else if (item.dataWidth < _transition &&
+              currentRight - 2 < leftBorder
+            ) {
+              currentRight -= item.dataWidth - 10;
+              item.style.left = currentRight + 'px';
+              item.className = 'tabs__item tabs__item--blue';
+              if (!firstEntire) {
+                firstEntire = true;
+                beginIndex = index;
+                currentLeft -= item.dataWidth;
+              }
+            }
+            else {
+              currentRight -= item.dataWidth;
+              if (!firstEntire) {
+                beginIndex = index;
+                currentLeft = currentRight;
+              }
+              item.style.left = currentRight + 'px';
+              item.className = 'tabs__item tabs__item--green';
             }
             prevItem = item;
           });
 
-          console.log('beginIndex', beginIndex);
-          console.log('currentLeft', currentLeft);
+          // console.log('beginIndex', beginIndex);
+          // console.log('currentLeft', currentLeft);
 
           _forEach(childs, function (item, index)
           {
+            // return false;
             if (index < beginIndex) {
               return ;
             }
@@ -260,12 +321,6 @@
                 currentLeft = transition;
               }
             }
-            // else if (currentLeft + _transition < leftBorder) {
-            //   transition = Math.min(currentLeft + _transition, leftBorder);
-            //   item.style.left = transition + 'px';
-            //   item.className = 'tabs__item tabs__item--gray';
-            //   currentLeft = transition;
-            // }
             else if (prevItem.dataWidth > minWidth &&
               currentLeft + prevItem.dataWidth - 1 <= rightBorder &&
               currentLeft + prevItem.dataWidth + _transition > rightBorder
@@ -278,21 +333,21 @@
               currentLeft + prevItem.dataWidth + _transition > rightBorder &&
               currentLeft + prevItem.dataWidth <= rightBorder
             ) {
-              item.style.left = currentLeft + prevItem.dataWidth - ((currentLeft + prevItem.dataWidth + _transition - rightBorder) / 5) + 'px'
-              currentLeft += prevItem.dataWidth - ((currentLeft + prevItem.dataWidth + _transition - rightBorder) / 5);
+              item.style.left = currentLeft + prevItem.dataWidth - ((currentLeft + prevItem.dataWidth + _transition - rightBorder) / 8) + 'px'
+              currentLeft += prevItem.dataWidth - ((currentLeft + prevItem.dataWidth + _transition - rightBorder) / 8);
               item.className = 'tabs__item tabs__item--pink';
             }
             else if (
               prevItem.dataWidth <= minWidth &&
               currentLeft + prevItem.dataWidth + 20 > rightBorder
             ) {
-              item.style.left = currentLeft + prevItem.dataWidth - 10 + 'px';
-              currentLeft += prevItem.dataWidth - 10;
+              item.style.left = currentLeft + prevItem.dataWidth - 8 + 'px';
+              currentLeft += prevItem.dataWidth - 8;
               item.className = 'tabs__item tabs__item--blue';
             }
             else {
               currentLeft += prevItem.dataWidth;
-              item.style.left = currentLeft + 'px'
+              item.style.left = currentLeft + 'px';
               item.className = 'tabs__item tabs__item--green';
             }
             // verticalCurrentLeft.style.left = currentLeft + 'px';
@@ -322,8 +377,9 @@
     _work();
     window.addEventListener('resize', function ()
     {
-      elementWidth = _width(element);
-      rightBorder = elementWidth - leftMargin;
+      var newWidth = _width(element);
+      rightBorder -= elementWidth - newWidth;
+      elementWidth = newWidth;
       _work();
     });
 
@@ -391,5 +447,20 @@
         isMoving = false;
       })
     })();
+
+    _forEach(childs, function (item)
+    {
+      item.addEventListener('mouseover', function ()
+      {
+        this.showLine = true;
+        _work();
+      });
+      item.addEventListener('mouseout', function ()
+      {
+        this.showLine = false;
+        _work();
+      });
+    });
+
   });
 })();
