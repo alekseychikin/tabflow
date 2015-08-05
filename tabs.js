@@ -9,6 +9,15 @@
       }
     }
   };
+  var _forInvEach = function (elements, cb)
+  {
+    var i;
+    for (i = elements.length - 1; i > -1; i = i - 1) {
+      if (cb(elements[i], i) === false) {
+        break;
+      }
+    }
+  };
   var _toArray = function (elements)
   {
     var res = [];
@@ -113,7 +122,7 @@
     wrap.style.position = 'relative';
 
     var rightMargin = 100;
-    var leftMargin = 100;
+    var leftMargin = 300;
     var rightBorder = elementWidth - rightMargin;
     var leftBorder = leftMargin;
 
@@ -179,6 +188,7 @@
         // {
           // notSoFast = false;
           var currentLeft = 0;
+          var currentRight = 0;
           var _left;
           var prevItem;
           var count = 5;
@@ -186,8 +196,50 @@
           var minWidth = 70;
           var transition;
           // var rightBorder = elementWidth * 1.5 / 2;
-          _forEach(childs, function (item)
+
+          var beginIndex = 1;
+          var firstEntire = false;
+
+          _forInvEach(childs, function (item, index)
           {
+            if (index == childs.length - 1) {
+              prevItem = item;
+              currentRight = item.dataLeft;
+              return ;
+            }
+            if (item.dataLeft < leftBorder) {
+              transition = Math.min(currentRight - _transition, leftBorder);
+              item.style.left = transition + 'px';
+              item.className = 'tabs__item tabs__item--blue';
+              currentRight = transition;
+              if (!firstEntire) {
+                firstEntire = true;
+                beginIndex = index;
+                currentLeft -= item.dataWidth;
+              }
+            }
+            else {
+              beginIndex = index;
+              currentRight -= item.dataWidth;
+              currentLeft = currentRight;
+              item.style.left = currentRight + 'px';
+              item.className = 'tabs__item';
+            }
+            prevItem = item;
+          });
+
+          console.log('beginIndex', beginIndex);
+          console.log('currentLeft', currentLeft);
+
+          _forEach(childs, function (item, index)
+          {
+            if (index < beginIndex) {
+              return ;
+            }
+            else if (index == beginIndex) {
+              prevItem = item;
+              return ;
+            }
             if (!prevItem) {
               prevItem = item;
               return ;
@@ -239,8 +291,8 @@
               item.className = 'tabs__item tabs__item--blue';
             }
             else {
-              item.style.left = currentLeft + prevItem.dataWidth + 'px'
               currentLeft += prevItem.dataWidth;
+              item.style.left = currentLeft + 'px'
               item.className = 'tabs__item tabs__item--green';
             }
             // verticalCurrentLeft.style.left = currentLeft + 'px';
