@@ -2,63 +2,38 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title></title>
+  <title>Tabflow</title>
   <link rel="stylesheet" href="reset.css" />
   <style>
     .tabs {
-      margin-top: 30px;
+      margin: 30px 100px 0;
+      padding: 10px 0;
+      background-color: rgba(0,0,0,0.05);
+      overflow: hidden;
     }
     .tabs__item {
       float: left;
       border-style: solid;
       border-color: #000;
-      border-width: 0 1px 1px 1px;
-      padding: 5px 5px;
+      border-width: 1px 1px 1px 1px;
+      padding: 5px 15px;
       margin-left: -1px;
       color: rgba(0,0,0,1);
       background-color: rgba(255,255,255,1);
     }
-    /*
-    .tabs__item:nth-child(1) {
-      background-color: #f1f1f1;
+    .tabs__scroll {
+      position: absolute;
+      top: 100px;
+      left: 100%;
+      width: 50px;
+      margin-left: -25px;
+      height: 10px;
+      background-color: #ddd;
+      cursor: pointer;
     }
-    .tabs__item:nth-child(2) {
-      background-color: #ece6e6;
-    }
-    .tabs__item:nth-child(3) {
-      background-color: #e0dddd;
-    }
-    .tabs__item:nth-child(4) {
-      background-color: #dbd6d6;
-    }
-    .tabs__item:nth-child(5) {
-      background-color: #d5d1d1;
-    }
-    .tabs__item:nth-child(6) {
-      background-color: #cfc8c8;
-    }
-    .tabs__item:nth-child(7) {
-      background-color: #c8bcbc;
-    }
-    .tabs__item:nth-child(8) {
-      background-color: #c9c1b6;
-    }
-    .tabs__item:nth-child(9) {
-      background-color: #c9c1b6;
-    }
-    .tabs__item:nth-child(10) {
-      background-color: #c9c7b6;
-    }
-    .tabs__item:nth-child(11) {
-      background-color: #b9c2ac;
-    }
-    .tabs__item:nth-child(12) {
-      background-color: #acc2ae;
-    }
-    */
     .vertical-line {
       position: absolute;
-      right: 100px;
+      right: 0;
       width: 1px;
       height: 50px;
       background-color: #000;
@@ -75,12 +50,13 @@
     }
     .vertical-line2 {
       position: absolute;
-      left: 300px;
+      left: 100px;
       width: 1px;
       height: 50px;
       background-color: #000;
       top: 57px;
       cursor: pointer;
+      display: none;
     }
     .vertical-line2:before {
       content: '';
@@ -117,30 +93,41 @@
     .tabs__item--gray {
       box-shadow: 0 0 5px #c7c7c7 inset;
     }
+    .log {
+      /*float: left;*/
+      /*width: 50px;*/
+      font-size: 14px;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
   <div class="tabs" data-tabs>
-    <div class="tabs__item">Все</div>
-    <div class="tabs__item">Отправлено письмо</div>
     <div class="tabs__item">У заказчика</div>
     <div class="tabs__item">Интервью</div>
     <div class="tabs__item">Выставлен оффер</div>
-    <div class="tabs__item">Выход на работу</div>
     <div class="tabs__item">Все</div>
     <div class="tabs__item">Отправлено письмо</div>
-    <div class="tabs__item">Интервью</div>
     <div class="tabs__item">Выставлен оффер</div>
-    <div class="tabs__item">В</div>
-    <div class="tabs__item">Отправлено письмо и что это значит</div>
     <div class="tabs__item">У заказчика</div>
     <div class="tabs__item">Интервью</div>
     <div class="tabs__item">Выставлен оффер</div>
-    <div class="tabs__item">Выход на работу</div>
+    <div class="tabs__item">Отправлено письмо</div>
+    <div class="tabs__item">Выставлен оффер</div>
+    <div class="tabs__item">Все</div>
+    <div class="tabs__item">Отправлено письмо</div>
+    <div class="tabs__item">Выставлен оффер</div>
+    <div class="tabs__item">У заказчика</div>
+    <div class="tabs__item">Интервью</div>
+    <div class="tabs__item">Выставлен оффер</div>
+    <!-- <div class="tabs__item">Отправлено письмо</div> -->
+    <!-- <div class="tabs__item">Выставлен оффер</div> -->
   </div>
   <div class="vertical-line"></div>
   <div class="vertical-line2"></div>
   <div class="vertical-current-left"></div>
+  <div class="tabs__scroll"></div>
+  <div class="logs"></div>
   <script src="tabs.js"></script>
 </body>
 </html>
