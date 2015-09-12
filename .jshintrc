@@ -1,0 +1,10 @@
+{
+  "undef": true,
+  "unused": true,
+  "indent": 2,
+  "quotmark": "single",
+  "eqeqeq": true,
+  "-W082": true,
+  "-W030": true,
+  "browser": true
+}

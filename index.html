@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <title>Tabflow</title>
   <link rel="stylesheet" href="reset.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <style>
     .tabs {
-      margin: 30px 100px 0;
+      margin: 30px 10px 0;
       padding: 10px 0;
       background-color: rgba(0,0,0,0.05);
       overflow: hidden;
@@ -17,9 +18,11 @@
       border-color: #000;
       border-width: 1px 1px 1px 1px;
       padding: 5px 15px;
-      margin-left: -1px;
       color: rgba(0,0,0,1);
       background-color: rgba(255,255,255,1);
+    }
+    .tabs__item + .tabs__item {
+      margin-left: -1px;
     }
     .tabs__scroll {
       position: absolute;
@@ -30,6 +33,7 @@
       height: 10px;
       background-color: #ddd;
       cursor: pointer;
+      display: none;
     }
     .vertical-line {
       position: absolute;
@@ -39,6 +43,7 @@
       background-color: #000;
       top: 57px;
       cursor: pointer;
+      display: none;
     }
     .vertical-line:before {
       content: '';
@@ -74,6 +79,7 @@
       background-color: #9aa4e4;
       top: 57px;
       cursor: pointer;
+      display: none;
     }
     .tabs__item--blue {
       box-shadow: 0 0 5px blue inset;
@@ -120,8 +126,8 @@
     <div class="tabs__item">У заказчика</div>
     <div class="tabs__item">Интервью</div>
     <div class="tabs__item">Выставлен оффер</div>
-    <!-- <div class="tabs__item">Отправлено письмо</div> -->
-    <!-- <div class="tabs__item">Выставлен оффер</div> -->
+    <div class="tabs__item">Отправлено письмо</div>
+    <div class="tabs__item">Выставлен оффер</div>
   </div>
   <div class="vertical-line"></div>
   <div class="vertical-line2"></div>
