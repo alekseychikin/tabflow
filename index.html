@@ -24,87 +24,6 @@
     .tabs__item + .tabs__item {
       margin-left: -1px;
     }
-    .tabs__scroll {
-      position: absolute;
-      top: 100px;
-      left: 100%;
-      width: 50px;
-      margin-left: -25px;
-      height: 10px;
-      background-color: #ddd;
-      cursor: pointer;
-      display: none;
-    }
-    .vertical-line {
-      position: absolute;
-      right: 0;
-      width: 1px;
-      height: 50px;
-      background-color: #000;
-      top: 57px;
-      cursor: pointer;
-      display: none;
-    }
-    .vertical-line:before {
-      content: '';
-      position: absolute;
-      left: -5px;
-      right: -5px;
-      top: 0;
-      bottom: 0;
-    }
-    .vertical-line2 {
-      position: absolute;
-      left: 100px;
-      width: 1px;
-      height: 50px;
-      background-color: #000;
-      top: 57px;
-      cursor: pointer;
-      display: none;
-    }
-    .vertical-line2:before {
-      content: '';
-      position: absolute;
-      left: -5px;
-      right: -5px;
-      top: 0;
-      bottom: 0;
-    }
-    .vertical-current-left {
-      position: absolute;
-      left: 0px;
-      width: 1px;
-      height: 50px;
-      background-color: #9aa4e4;
-      top: 57px;
-      cursor: pointer;
-      display: none;
-    }
-    .tabs__item--blue {
-      box-shadow: 0 0 5px blue inset;
-    }
-    .tabs__item--green {
-      box-shadow: 0 0 5px #40C140 inset;
-    }
-    .tabs__item--red {
-      box-shadow: 0 0 5px #c14740 inset;
-    }
-    .tabs__item--yellow {
-      box-shadow: 0 0 5px #e9e85d inset;
-    }
-    .tabs__item--pink {
-      box-shadow: 0 0 5px #e25de9 inset;
-    }
-    .tabs__item--gray {
-      box-shadow: 0 0 5px #c7c7c7 inset;
-    }
-    .log {
-      /*float: left;*/
-      /*width: 50px;*/
-      font-size: 14px;
-      margin-top: 4px;
-    }
   </style>
 </head>
 <body>
@@ -129,11 +48,51 @@
     <div class="tabs__item">Отправлено письмо</div>
     <div class="tabs__item">Выставлен оффер</div>
   </div>
-  <div class="vertical-line"></div>
-  <div class="vertical-line2"></div>
-  <div class="vertical-current-left"></div>
-  <div class="tabs__scroll"></div>
-  <div class="logs"></div>
-  <script src="tabs.js"></script>
+  <div id="contain"></div>
+  <script type="text/html" id="template-tabs">
+    <div class="tabs" id="new-tabs">
+      <div class="tabs__item">У заказчика</div>
+      <div class="tabs__item">Интервью</div>
+      <div class="tabs__item">Выставлен оффер</div>
+      <div class="tabs__item">Все</div>
+      <div class="tabs__item">Отправлено письмо</div>
+      <div class="tabs__item">Выставлен оффер</div>
+      <div class="tabs__item">У заказчика</div>
+      <div class="tabs__item">Интервью</div>
+      <div class="tabs__item">Выставлен оффер</div>
+      <div class="tabs__item">Отправлено письмо</div>
+      <div class="tabs__item">Выставлен оффер</div>
+      <div class="tabs__item">Все</div>
+      <div class="tabs__item">Отправлено письмо</div>
+      <div class="tabs__item">Выставлен оффер</div>
+      <div class="tabs__item">У заказчика</div>
+      <div class="tabs__item">Интервью</div>
+      <div class="tabs__item">Выставлен оффер</div>
+      <div class="tabs__item">Отправлено письмо</div>
+      <div class="tabs__item">Выставлен оффер</div>
+    </div>
+  </script>
+  <script type="text/javascript" src="tabs.js"></script>
+  <script type="text/javascript">
+    var tabsHTML = document.getElementById('template-tabs').innerHTML;
+    document.getElementById('contain').innerHTML = tabsHTML;
+    var newTabs = tabflow.create(document.getElementById('new-tabs'), 500);
+    setTimeout(function ()
+    {
+      tabflow.slide(document.getElementById('new-tabs'), 1000);
+    }, 1000);
+    setTimeout(function ()
+    {
+      tabflow.animate(document.getElementById('new-tabs'), 0);
+    }, 2000);
+    setTimeout(function ()
+    {
+      tabflow.destroy(document.getElementById('new-tabs'));
+    }, 3000);
+    setTimeout(function ()
+    {
+      tabflow.create(document.getElementById('new-tabs'), 500);
+    }, 4000);
+  </script>
 </body>
 </html>

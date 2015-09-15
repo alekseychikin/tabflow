@@ -1,6 +1,20 @@
-(function ()
+/* global define */
+/* global module */
+(function (factory)
 {
-
+  if ( typeof module === 'object' && typeof module.exports === 'object' ) {
+    module.exports = factory();
+  }
+  else if (typeof define === 'function' && define.amd) {
+    // Register as an anonymous AMD module:
+    define(['tabflow'], factory);
+  }
+  else {
+    // Browser globals:
+    window.tabflow = factory();
+  }
+})(function ()
+{
   var FRAMES_PER_SECOND = 50;
 
   function _forEach (elements, cb)
@@ -139,7 +153,7 @@
     }
   }
 
-  function doSlide(options, _offset)
+  function doSlide (options, _offset)
   {
     var prevItem;
     var transition;
@@ -217,7 +231,7 @@
     });
   }
 
-  function checkToLimitOffset(options, value)
+  function checkToLimitOffset (options, value)
   {
     if (value > options.wrapWidth - options.elementWidth) {
       value = options.wrapWidth - options.elementWidth;
@@ -228,9 +242,8 @@
     return value;
   }
 
-  function slide(options)
+  function slide (options)
   {
-    // console.log(options);
     options.offset = checkToLimitOffset(options, options.offset);
     options.wrap.style.left = - options.offset + 'px';
     _work(options);
@@ -264,7 +277,7 @@
 
   var lowestDelta;
 
-  function shouldAdjustOldDeltas(orgEvent, absDelta)
+  function shouldAdjustOldDeltas (orgEvent, absDelta)
   {
     // If this is an older event and the delta is divisable by 120,
     // then we are assuming that the browser is treating this as an
@@ -276,7 +289,7 @@
     return orgEvent.type === 'mousewheel' && absDelta % 120 === 0;
   }
 
-  function mouseWheelHandler(e, options)
+  function mouseWheelHandler (e, options)
   {
     var orgEvent = e || window.event;
     orgEvent.preventDefault();
@@ -362,9 +375,15 @@
 
   var elements = document.querySelectorAll('[data-tabs]');
 
-  _forEach(elements, function (element)
+  var cachedElements = [];
+
+  _forEach(elements, create);
+
+  function create (element, defaultOffset)
   {
     var options = {};
+    defaultOffset || (defaultOffset = 0);
+    options.element = element;
     options.childs = _toArray(element.childNodes);
     options.wrap = document.createElement('div');
     options.wrapWidth = 0;
@@ -453,6 +472,8 @@
       e.stopPropagation();
     });
 
+    cachedElements.push(options);
+
     // slide by touch event
     (function ()
     {
@@ -499,7 +520,7 @@
       });
     })();
 
-    function handler(e)
+    function handler (e)
     {
       mouseWheelHandler(e, options);
     }
@@ -520,13 +541,74 @@
 
     _work(options);
 
-    window.addEventListener('resize', function ()
-    {
-      options.elementWidth = _width(element, false);
-      slide(options);
-    });
+    options.offset = defaultOffset;
+    slide(options);
 
     disableSelection(document.body);
+  }
 
+
+  window.addEventListener('resize', function ()
+  {
+    _forEach(cachedElements, function (options)
+    {
+      options.elementWidth = _width(options.element, false);
+      slide(options);
+    });
   });
-})();
+
+  function slideWidthElement (element, offset)
+  {
+    _forEach(cachedElements, function (options)
+    {
+      if (options.element === element) {
+        options.offset = offset;
+        slide(options);
+      }
+    });
+  }
+
+  function animationSlideWithElement (element, offset)
+  {
+    _forEach(cachedElements, function (options)
+    {
+      if (options.element === element) {
+        animation(options.offset, checkToLimitOffset(options, offset), 500, InOut, function (value)
+        {
+          options.offset = value;
+          slide(options);
+        });
+      }
+    });
+  }
+
+  function destroyByElement (element)
+  {
+    _forEach(cachedElements, function (options, index)
+    {
+      if (options.element === element) {
+        _forEach(options.childs, function (item)
+        {
+          options.element.appendChild(item);
+          item.style.position = '';
+          item.style.left = '';
+          item.style.width = '';
+        });
+        options.element.removeChild(options.leftElement);
+        options.element.removeChild(options.rightElement);
+        options.element.removeChild(options.wrap);
+        options.element.style.position = '';
+        options.element.style.height = '';
+        cachedElements.splice(index, 1);
+      }
+    });
+  }
+
+  return {
+    create: create,
+    slide: slideWidthElement,
+    animate: animationSlideWithElement,
+    destroy: destroyByElement
+  };
+
+});
