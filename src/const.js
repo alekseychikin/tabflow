@@ -1,0 +1,1 @@
+var FRAMES_PER_SECOND = 50;

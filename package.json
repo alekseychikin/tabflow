@@ -1,0 +1,29 @@
+{
+  "name": "tabflow",
+  "version": "0.0.1",
+  "description": "Javascript for making float elements or inline-block element to panel tabs like new Safari",
+  "main": "dist/tabflow.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/makingoff/tabflow"
+  },
+  "keywords": [
+    "Javascript",
+    "tabs"
+  ],
+  "author": "Aleksei Chikin <mail@makingoff.name>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/makingoff/tabflow/issues"
+  },
+  "homepage": "https://github.com/makingoff/tabflow",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-browserify2": "0.0.2",
+    "gulp-livereload": "^3.8.0",
+    "gulp-uglify": "^1.4.1"
+  }
+}
